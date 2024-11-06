@@ -4,11 +4,12 @@
 [LAT_AVG1,LON_AVG1] = meshgrid(bbox1(3):dx:bbox1(4),bbox1(1):0.08:bbox1(2));
 [LAT_AVG2,LON_AVG2] = meshgrid(bbox2(3):dx:bbox2(4),bbox2(1):0.08:bbox2(2));
 
+cod_cleanup = 1;
 nsteps_rescale = 7;
 % Loop through the cases (Large grid vs Small grid)
 for i_combo = 1:n_combo
     tic
-    for icase = 1 % do we look at grid 1 and / or grid 2
+    for icase = 2 % do we look at grid 1 and / or grid 2
         % Initialize grids and case names, bounding boxes etc...
         if icase == 1 % case Large grid
             LAT_AVG=LAT_AVG1;
@@ -142,15 +143,13 @@ for i_combo = 1:n_combo
         if cod_cleanup == 1
             load(['/Volumes/BSR_SSD_2TB/THE OCEAN CLEANUP/OSA/stats/' str_ss '_' num2str(nsys_list(i_combo)) 'sys_' num2str(100*cleanup_ratio_list(i_combo)) '_' num2str(pc_gpgp_file(i_combo)) 'pc/statsY' num2str(end_year)  '.mat'],'stats');
         end
-        %dir_in = ['/' str_ss '_' num2str(nsys_list(i_combo)) '/'];
-        dir_in = ['/' str_ss '_' num2str(nsys_list(i_combo)) 'sys_' num2str(100*cleanup_ratio_list(i_combo)) '_' num2str(pc_gpgp_file(i_combo)) 'pc/'];
+        dir_in = ['/' str_ss '_' num2str(nsys_list(i_combo)) '/'];
         if cod_bar == 1
-            %load(['../data/barriers' dir_in 'barriers_14Y' num2str(end_year)  '.mat'],'p');
+            load(['../data/barriers' dir_in 'barriers_14Y' num2str(end_year)  '.mat'],'p');
             load(['../data/barriers' dir_in 'EncDens14-' num2str(end_year)  '.mat']);
-            %ipLon = floor((p.LON - LON_AVG1(1,1))/ dx) + 1;
-            %ipLat = floor((p.LAT - LAT_AVG1(1,1))/ dx) + 1;
-            %iarea = (0.08*0.08*1.853*60*1.853*60)*(cos(p.LAT*pi/180));
-            iarea = (0.08*0.08*1.853*60*1.853*60)*cos(30*pi/180);
+            ipLon = floor((p.LON - LON_AVG1(1,1))/ dx) + 1;
+            ipLat = floor((p.LAT - LAT_AVG1(1,1))/ dx) + 1;
+            iarea = (0.08*0.08*1.853*60*1.853*60)*(cos(p.LAT*pi/180));
         end
         count=0;
         lon_vect = LON_AVG1(:);
@@ -191,18 +190,18 @@ for i_combo = 1:n_combo
                 if cod_cleanup == 1
                     stats_gpgp = stats_vect(mask1);
                     total_mass(count) = sum(stats_vect);
-                    total_mass_gpgp(count) = sum(stats_gpgp);
                     mean_mass(count) = sum(stats_gpgp)/sum(mask1);
                     median_mass(count) = median(stats_gpgp);
+                    total_mass_gpgp(count) = sum(stats_gpgp);
                 end
                 date_treated(count) = datetime(y,01,i);
                 if cod_bar == 1
                     for j=1:nsys_list(i_combo)
-                        %encountered_density_bau(count,j) = stats_bau{count}(ipLon(ibar,j),ipLat(ibar,j))/iarea(ibar,j);
-                        encountered_density_track(count,j) = EncounteredDensityTrack(ibar,j)/iarea;%(ibar,j);
-                        encountered_density(count,j) = EncounteredWeightedDensityTrack(ibar,j,1,1)/iarea;%(ibar,j);
+                        encountered_density_bau(count,j) = stats_bau{count}(ipLon(ibar,j),ipLat(ibar,j))/iarea(ibar,j);
+                        encountered_density_track(count,j) = EncounteredDensityTrack(ibar,j)/iarea(ibar,j);
+                        encountered_density(count,j) = EncounteredWeightedDensityTrack(ibar,j,1,1)/iarea(ibar,j);
                     end
-                    %size(encountered_density_bau)
+                    size(encountered_density_bau)
                 end
             end
             num_tot_days = num_tot_days + num_days;
@@ -268,7 +267,7 @@ for i_combo = 1:n_combo
         end
         if cod_bar == 1
             % figure
-            %encountered_density_bau_glo{i_combo} = encountered_density_bau;
+            encountered_density_bau_glo{i_combo} = encountered_density_bau;
             % enc = encountered_density_bau(1:end,:);
             % enc = enc(:);
             % boxplot(enc)
@@ -286,7 +285,6 @@ for i_combo = 1:n_combo
         end
         if cod_cleanup == 1
             total_mass_glo{i_combo} = total_mass;
-            total_mass_gpgp_glo{i_combo} = total_mass_gpgp;
         end
         total_mass_bau_glo{i_combo} = total_mass_bau;
         total_mass_bau_gpgp_glo{i_combo} = total_mass_bau_gpgp;

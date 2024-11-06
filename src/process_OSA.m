@@ -3,9 +3,10 @@
 %% OSA parameters
 method = 1; % 0 is to compute the BAU with the particles, 1 is directly with the stats 
 cod_cdf = 0;% comparison between the CDF 
-cod_bar = 0;% are we looking at the individual barriers density
+cod_bar = 1;% are we looking at the individual barriers density
 cod_fig = 0;% do we plot the figures - 1 or not - 0
-cod_cleanup = 1; 
+cod_recompute = 1;% shortcut to use directly cleanup ratio_computation 
+cod_cleanup = 0; 
 cod_ver = 7;
 start_year = 2009;
 end_year = 2018;
@@ -51,8 +52,12 @@ dx = 0.08;
 nsteps_rescale = 7;
 bisex_days = 366;
 
-%% Run OSA processing
-rescaling_GPGP
+% Run OSA processing
+if cod_recompute == 1
+    rescaling_GPGP
+else
+    load("../results/cleanup_ratio_grid1.mat")
+end
 
 %% Mass balance parameters
 
@@ -66,10 +71,8 @@ steps = [0.01; 0.03];
 ratio_bo_fr = (1-1/7.14);
 cleaning_ratio_tab = ones(1,n_combo);
 us_cleanup = zeros(1,n_combo);
-cod_cleanup = 1;
 
 %% Mass balance code
-n_combo = 36;
 code_with_degrading_inflow;
 
 % Cases characteristics

@@ -6,7 +6,7 @@ if cod_fig == 1
 end
 
 %% Looping along the cases
-%close all
+close all
 for grs = 1:3 % 3 growth scenarios
     % Selecting the scenario
     switch grs
@@ -255,9 +255,8 @@ for c = case_tab
             end
         end
         fill([(2027:2037), fliplr((2027:2037))], [(tab2{end-1}.global_tab)', fliplr((tab1{2}.global_tab)')], col, 'FaceAlpha', 0.2);grid on;
-        %fill([(2027:2037), fliplr((2027:2037))], [(tab2{end-1}.macro_tab)', fliplr((tab1{2}.macro_tab)')], col, 'FaceAlpha', 0.2);grid on;
         hold on;
-        title(['GPGP area (100%) macro: ' num2str(c) ' systems'])
+        title(["GPGP area (100%): " num2str([num2str(c)])])
         ylim([0 1])
         plot([2027 2037],[0.2 0.2],'r--')
         plot([2032 2032.01],[0 1e6],'b--')
